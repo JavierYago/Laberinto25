@@ -56,7 +56,7 @@ class Laberinto(ElementoMapa):
     def agregar_habitacion(self, habitacion):
         self.habitaciones.append(habitacion)
 
-    def eliminar_habitacion(delf, habitacion):
+    def eliminar_habitacion(self, habitacion):
         self.habitaciones.remove(habitacion)
 
     def obtener_habitacion(self, num):
@@ -76,8 +76,8 @@ class Creator:
     def fabricarPared(self):
         return Pared()
 
-    def fabricarPuerta(self):
-        return Puerta()
+    def fabricarPuerta(self, lado1, lado2):
+        return Puerta(lado1, lado2)
 
     def fabricarHabitacion(self, num):
         hab = Habitación(num)
@@ -101,22 +101,8 @@ class CreatorB(Creator):
     def fabricarPared(self):
         return ParedBomba()
 
-    def fabricarPuerta(self):
-        return Puerta()
 
-    def fabricarHabitacion(self, num):
-        hab = Habitación(num)
-        hab.norte = self.fabricarPared()
-        hab.sur = self.fabricarPared()
-        hab.este = self.fabricarPared()
-        hab.oeste = self.fabricarPared()
-        return hab
-
-    def fabricarLaberinto(self):
-        return Laberinto()
-
-    def fabricarJuego(self):
-        return Juego()
+    
 
 class Juego:
     def __init__(self):
@@ -137,7 +123,7 @@ class Juego:
         hab2.este = Pared()
         hab2.oeste = Pared()
 
-        puerta = Puerta()
+        puerta = Puerta(hab1, hab2)
         puerta.lado1 = hab1
         puerta.lado2 = hab2
 
@@ -153,9 +139,7 @@ class Juego:
         unFM = Creator()
         hab1 = unFM.fabricarHabitacion(1)
         hab2 = unFM.fabricarHabitacion(2)
-        puerta = unFM.fabricarPuerta()
-        puerta.lado1 = hab1
-        puerta.lado2 = hab2
+        puerta = unFM.fabricarPuerta(hab1, hab2)
         hab1.sur = puerta
         hab2.norte = puerta
 
@@ -164,12 +148,10 @@ class Juego:
         laberinto.agregar_habitacion(hab2)
         return laberinto
 
-    def crearLaberinto2HabitacionesFM(unFM):
+    def crearLaberinto2HabitacionesFM(self, unFM):
         hab1 = unFM.fabricarHabitacion(1)
         hab2 = unFM.fabricarHabitacion(2)
-        puerta = unFM.fabricarPuerta()
-        puerta.lado1 = hab1
-        puerta.lado2 = hab2
+        puerta = unFM.fabricarPuerta(hab1, hab2)
         hab1.sur = puerta
         hab2.norte = puerta
 
