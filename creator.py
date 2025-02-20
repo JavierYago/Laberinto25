@@ -1,4 +1,4 @@
-from juego import Habitación, Pared, Puerta, Laberinto, ParedBomba, Bomba, Agresivo, Perezoso
+from juego import Habitación, Pared, Puerta, Laberinto, ParedBomba, Bomba, Agresivo, Perezoso, Boss
 
 class Creator:
     def __init__(self):
@@ -29,6 +29,9 @@ class Creator:
     
     def fabricarBichoPerezoso(self):
         return Perezoso()
+    
+    def fabricarBoss(self):
+        return Boss()
 
 
 class CreatorB(Creator):

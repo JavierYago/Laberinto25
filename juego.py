@@ -39,6 +39,11 @@ class Bicho:
         self.poder = 1
         self.vidas = 5
 
+    def iniBoss(self):
+        self.modo = Boss()
+        self.poder = 20
+        self.vidas = 10
+
 class Modo:
     def __init__(self):
         pass
@@ -48,6 +53,10 @@ class Agresivo(Modo):
         super().__init__()
 
 class Perezoso(Modo):
+    def __init__(self):
+        super().__init__()
+
+class Boss(Modo):
     def __init__(self):
         super().__init__()
 
@@ -229,4 +238,13 @@ class Juego:
     def obtenerHabitacion(self, num):
         return self.laberinto.obtener_habitacion(num)
     
-    
+    def crearLaberinto1H1BB(self, creator):
+        laberinto = creator.fabricarLaberinto()
+        hab1 = creator.fabricarHabitacion(1)
+        bichoBoss = creator.fabricarBoss()
+        laberinto.agregar_habitacion(hab1)
+        self.agregar_bicho(bichoBoss)
+        bichoBoss.posicion = hab1
+        return laberinto
+       
+      

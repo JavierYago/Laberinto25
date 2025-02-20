@@ -42,3 +42,9 @@ print(hab2)
 print(hab3)
 print(hab4)
 
+#Primera implementación en Python: Bicho Boss
+juego = Juego()
+creator = Creator()
+juego.laberinto = juego.crearLaberinto1H1BB(creator)
+hab1 = juego.obtenerHabitacion(1)
+print(hab1)
