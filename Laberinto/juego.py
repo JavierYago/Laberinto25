@@ -1,11 +1,54 @@
 class ElementoMapa:
-    def __init__(self):
+    def __init__(self,padre):
+        self.padre = padre
         pass
     
     def entrar(self):
         pass
 
-class Decorator(ElementoMapa):
+    def entrar(self,alguien):
+        pass
+
+class Orientacion:
+    def __init__(self):
+        pass
+
+    def ponerElemento(self, em, unContenedor):
+        pass
+
+class Norte(Orientacion):
+    def ponerElemento(self, em, unContenedor):
+        unContenedor.norte = em
+
+    def obtenerElementoOR(self, unContenedor):
+        return unContenedor.norte
+
+class Sur(Orientacion):
+    def ponerElemento(self, em, unContenedor):
+        unContenedor.sur = em
+
+    def obtenerElementoOR(self, unContenedor):
+        return unContenedor.sur
+
+class Este(Orientacion):
+    def ponerElemento(self, em, unContenedor):
+        unContenedor.este = em
+
+    def obtenerElementoOR(self, unContenedor):
+        return unContenedor.este
+
+class Oeste(Orientacion):
+    def ponerElemento(self, em, unContenedor):
+        unContenedor.oeste = em
+
+    def obtenerElementoOR(self, unContenedor):
+        return unContenedor.oeste
+    
+class Hoja(ElementoMapa):
+    def __init__(self):
+        super().__init__()
+
+class Decorator(Hoja):
     def __init__(self,em):
         super().__init__()
         self.em = em
@@ -60,6 +103,26 @@ class Boss(Modo):
     def __init__(self):
         super().__init__()
 
+class Contenedor(ElementoMapa):
+    def __init__(self, hijos, orientaciones):
+        super().__init__()
+        self.hijos = hijos
+        self.orientaciones = orientaciones
+
+    def agregarHijo(self, em):
+        self.hijos.append(em)
+
+    def eliminarHijo(self, em):
+        self.hijos.remove(em)
+
+    def agregarOrientacion(self, orientacion):
+        self.orientaciones.append(orientacion)
+        
+    def obtenerElementoOR(self, orientacion):
+        return self.obtenerElementoOR(orientacion)
+
+    def ponerEnOr(self, em, orientacion):
+        self.ponerElemento(em, orientacion)
 class Pared(ElementoMapa):
     def __init__(self):
         super().__init__()
@@ -94,7 +157,7 @@ class Puerta(ElementoMapa):
     def cerrar(self):
         self.abierta = False
 
-class Habitación(ElementoMapa):
+class Habitación(Contenedor):
     def __init__(self, num):
         super().__init__()
         self.num = num
@@ -102,21 +165,21 @@ class Habitación(ElementoMapa):
     def entrar(self):
         print(f"Estás en una habitación{self.num}")
 
-class Laberinto(ElementoMapa):
+class Laberinto(Contenedor):
     def __init__(self):
         super().__init__()
-        self.habitaciones = []
+        self.hijos = []
 
-    def agregar_habitacion(self, habitacion):
-        self.habitaciones.append(habitacion)
+    def agregar_habitacion(self, hijo):
+        self.hijos.append(hijo)
 
-    def eliminar_habitacion(self, habitacion):
-        self.habitaciones.remove(habitacion)
+    def eliminar_habitacion(self, hijo):
+        self.hijos.remove(hijo)
 
     def obtener_habitacion(self, num):
-        for habitacion in self.habitaciones:
-            if habitacion.num == num:
-                return habitacion
+        for hijo in self.hijos:
+            if hijo.num == num:
+                return hijo
 
         return None
 
@@ -247,4 +310,3 @@ class Juego:
         bichoBoss.posicion = hab1
         return laberinto
        
-      
