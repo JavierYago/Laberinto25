@@ -1,3 +1,4 @@
+from FactoryMethod.creator import *
 class ElementoMapa:
     def __init__(self,padre):
         self.padre = padre
@@ -9,39 +10,57 @@ class ElementoMapa:
     def entrar(self,alguien):
         pass
 
+    def esBomba(self):
+        return False
+    
+    def esPared(self):
+        return False
+    
+    def esPuerta(self):
+        return False
+    
+    def esHabitacion(self):
+        return False
+    
+    def esLaberinto(self):
+        return False
+
 class Orientacion:
     def __init__(self):
         pass
 
-    def ponerElemento(self, em, unContenedor):
+    def obtenerElementoOrEn(self, unContenedor):
+        pass
+
+    def ponerElemento(self, unEm, unContenedor):
         pass
 
 class Norte(Orientacion):
     def ponerElemento(self, em, unContenedor):
         unContenedor.norte = em
 
-    def obtenerElementoOR(self, unContenedor):
+    def obtenerElementoOREn(self, unContenedor):
         return unContenedor.norte
 
 class Sur(Orientacion):
     def ponerElemento(self, em, unContenedor):
         unContenedor.sur = em
 
-    def obtenerElementoOR(self, unContenedor):
+    def obtenerElementoOREn(self, unContenedor):
         return unContenedor.sur
 
 class Este(Orientacion):
     def ponerElemento(self, em, unContenedor):
         unContenedor.este = em
 
-    def obtenerElementoOR(self, unContenedor):
+    def obtenerElementoOREn(self, unContenedor):
         return unContenedor.este
 
 class Oeste(Orientacion):
     def ponerElemento(self, em, unContenedor):
         unContenedor.oeste = em
 
-    def obtenerElementoOR(self, unContenedor):
+    def obtenerElementoOREn(self, unContenedor):
         return unContenedor.oeste
     
 class Hoja(ElementoMapa):
@@ -65,12 +84,25 @@ class Bomba(Decorator):
         else:
             self.em.entrar()
 
+    def esBomba(self):
+        return True
+
 class Bicho:
-    def __init__(self, vidas, poder, modo, posicion):
-        self.vidas = vidas
-        self.poder = poder
+    def __init__(self, modo, posicion):
+        self.vidas = 5
+        self.poder = 1
         self.modo = modo
         self.posicion = posicion
+        
+
+    def esAgresivo(self):
+        return self.modo.esAgresivo()
+    
+    def esPerezoso(self):
+        return self.modo.esPerezoso()
+    
+    def esBoss(self):
+        return self.modo.esBoss()
 
     def iniAgresivo(self):
         self.modo = Agresivo()
@@ -91,25 +123,51 @@ class Modo:
     def __init__(self):
         pass
 
+    def actua(self, unBicho):
+        self.camina(unBicho)
+
+    def camina(self, unBicho):
+        "self subclassResponsibility."
+        "definir un caminar predeterminado"
+
+    def esAgresivo(self):
+        return False
+    
+    def esPerezoso(self):
+        return False
+    
+    def esBoss(self):
+        return False
+
 class Agresivo(Modo):
     def __init__(self):
         super().__init__()
+
+    def esAgresivo(self):
+        return True
 
 class Perezoso(Modo):
     def __init__(self):
         super().__init__()
 
+    def esPerezoso(self):
+        return True
+
 class Boss(Modo):
     def __init__(self):
         super().__init__()
 
+    def esBoss(self):
+        return True
+
 class Contenedor(ElementoMapa):
-    def __init__(self, hijos, orientaciones):
+    def __init__(self):
         super().__init__()
-        self.hijos = hijos
-        self.orientaciones = orientaciones
+        self.hijos = []
+        self.orientaciones = []
 
     def agregarHijo(self, em):
+        em.padre = self
         self.hijos.append(em)
 
     def eliminarHijo(self, em):
@@ -119,16 +177,20 @@ class Contenedor(ElementoMapa):
         self.orientaciones.append(orientacion)
         
     def obtenerElementoOR(self, orientacion):
-        return self.obtenerElementoOR(orientacion)
+        return orientacion.obtenerElementoOR(self)
 
-    def ponerEnOr(self, em, orientacion):
-        self.ponerElemento(em, orientacion)
+    def ponerEnOr(self, orientacion, em):
+        orientacion.ponerElemento(em, self)
+
 class Pared(ElementoMapa):
     def __init__(self):
         super().__init__()
 
     def entrar(self):
         print("¡Te has chocado con una pared")
+
+    def esPared(self):
+        return True
 
 class ParedBomba(Pared):
     def __init__(self):
@@ -157,24 +219,33 @@ class Puerta(ElementoMapa):
     def cerrar(self):
         self.abierta = False
 
+    def esPuerta(self):
+        return True
+
 class Habitación(Contenedor):
-    def __init__(self, num):
+    def __init__(self, num, norte, sur, este, oeste):
         super().__init__()
         self.num = num
+        self.norte = norte
+        self.sur = sur
+        self.este = este
+        self.oeste = oeste
         
     def entrar(self):
         print(f"Estás en una habitación{self.num}")
 
+    def esHabitacion(self):
+        return True
+
 class Laberinto(Contenedor):
     def __init__(self):
         super().__init__()
-        self.hijos = []
 
-    def agregar_habitacion(self, hijo):
-        self.hijos.append(hijo)
+    def agregar_habitacion(self, unaHabitacion):
+        self.hijos.append(unaHabitacion)
 
-    def eliminar_habitacion(self, hijo):
-        self.hijos.remove(hijo)
+    def eliminar_habitacion(self, unaHabitacion):
+        self.hijos.remove(unaHabitacion)
 
     def obtener_habitacion(self, num):
         for hijo in self.hijos:
@@ -185,6 +256,9 @@ class Laberinto(Contenedor):
 
     def entrar(self):
         print("Estás en un laberinto")
+
+    def esLaberinto(self):
+        return True
     
 
 class Juego:
@@ -193,11 +267,14 @@ class Juego:
         self.bichos = []
 
     def agregar_bicho(self, bicho):
-        self.bichos.append(bicho) 
+        self.bichos.append(bicho)
 
-    def iniciar_juego(self):
+    def eliminar_bicho(self, bicho):
+        self.bichos.remove(bicho) 
+
+    """ def iniciar_juego(self):
         print("¡Bienvenido al juego del laberinto!")
-        # Aquí puedes agregar la lógica para iniciar el juego
+        # Aquí puedes agregar la lógica para iniciar el juego """
 
     def crearLaberinto2Habitaciones(self):
         laberinto = Laberinto()
@@ -222,17 +299,36 @@ class Juego:
         laberinto.agregar_habitacion(hab2)
         return laberinto
 
-    def crearLaberinto2HabitacionesFM(self, creator):
-        laberinto = creator.fabricarLaberinto()
-        hab1 = creator.fabricarHabitacion(1)
-        hab2 = creator.fabricarHabitacion(2)
-        puerta = creator.fabricarPuerta(hab1, hab2)
+    def crearLaberinto2HabitacionesFM(self):
+        unFM = Creator()
+        laberinto = unFM.fabricarLaberinto()
+        hab1 = unFM.fabricarHabitacion(1)
+        hab2 = unFM.fabricarHabitacion(2)
+        puerta = unFM.fabricarPuerta()
+        hab1.lado1 = puerta
+        hab2.lado2 = puerta
         hab1.sur = puerta
         hab2.norte = puerta
 
         laberinto.agregar_habitacion(hab1)
         laberinto.agregar_habitacion(hab2)
         return laberinto
+    
+    def crearLaberinto2HabitacionesFM(self, unFM):
+        laberinto = unFM.fabricarLaberinto()
+        hab1 = unFM.fabricarHabitacion(1)
+        hab2 = unFM.fabricarHabitacion(2)
+        puerta = unFM.fabricarPuerta()
+        hab1.lado1 = puerta
+        hab2.lado2 = puerta
+
+        hab1.ponerEnOr(puerta, unFM.fabricarSur())
+        hab2.ponerEnOr(puerta, unFM.fabricarNorte())
+
+        laberinto.agregar_habitacion(hab1)
+        laberinto.agregar_habitacion(hab2)
+        return laberinto
+        
     
     def crearLaberinto2HabitacionesFMD(self, creator):
         laberinto = creator.fabricarLaberinto()
@@ -247,56 +343,67 @@ class Juego:
         bomba2 = creator.fabricarBomba(pared2)
         hab2.oeste = bomba2
 
-        puerta = creator.fabricarPuerta(hab1, hab2)
+        puerta = creator.fabricarPuerta()
+        hab1.lado1 = puerta
+        hab2.lado2 = puerta
         hab1.sur = puerta
         hab2.norte = puerta
 
         laberinto.agregar_habitacion(hab1)
         laberinto.agregar_habitacion(hab2)
         return laberinto
-    
-    def crearLaberinto4H4BFMD(self, creator):
-        laberinto = creator.fabricarLaberinto()
-        hab1 = creator.fabricarHabitacion(1)
-        hab2 = creator.fabricarHabitacion(2)
-        hab3 = creator.fabricarHabitacion(3)
-        hab4 = creator.fabricarHabitacion(4)
 
-        puerta1 = creator.fabricarPuerta(hab1, hab2)
-        hab1.sur = puerta1
-        hab2.norte = puerta1
+    def crearLaberinto4H4BFM(self, unFM):
+        # Crear orientaciones
+        norte = unFM.fabricarNorte()
+        sur = unFM.fabricarSur()
+        este = unFM.fabricarEste()
+        oeste = unFM.fabricarOeste()
 
-        puerta2 = creator.fabricarPuerta(hab1, hab3)
-        hab1.este = puerta2
-        hab3.oeste = puerta2
+        # Crear habitaciones
+        hab1 = unFM.fabricarHabitacion(1)
+        hab2 = unFM.fabricarHabitacion(2)
+        hab3 = unFM.fabricarHabitacion(3)
+        hab4 = unFM.fabricarHabitacion(4)
 
-        puerta3 = creator.fabricarPuerta(hab2, hab4)
-        hab2.este = puerta3
-        hab4.oeste = puerta3
+        # Crear puertas y asignar lados
+        puerta1 = unFM.fabricarPuerta()
+        hab1.lado1 = puerta1
+        hab2.lado2 = puerta1
+        puerta2 = unFM.fabricarPuerta()
+        hab1.lado1 = puerta2
+        hab3.lado2 = puerta2
+        puerta3 = unFM.fabricarPuerta()
+        hab2.lado1 = puerta3
+        hab4.lado2 = puerta3
+        puerta4 = unFM.fabricarPuerta()
+        hab3.lado1 = puerta4
+        hab4.lado2 = puerta4
 
-        puerta4 = creator.fabricarPuerta(hab3, hab4)
-        hab3.sur = puerta4
-        hab4.norte = puerta4
+        # Colocar las puertas en las habitaciones
+        hab1.ponerEnOr(sur, puerta1)
+        hab2.ponerEnOr(norte, puerta1)
+        hab1.ponerEnOr(este, puerta2)
+        hab3.ponerEnOr(oeste, puerta2)
+        hab2.ponerEnOr(este, puerta3)
+        hab4.ponerEnOr(oeste, puerta3)
+        hab3.ponerEnOr(sur, puerta4)
+        hab4.ponerEnOr(norte, puerta4)
 
-        bicho1 = creator.fabricarBichoAgresivo()
-        bicho2 = creator.fabricarBichoAgresivo()
-        bicho3 = creator.fabricarBichoPerezoso()
-        bicho4 = creator.fabricarBichoPerezoso()
+        # Crear laberinto y agregar habitaciones
+        self.laberinto = unFM.fabricarLaberinto()
+        self.laberinto.agregar_habitacion(hab1)
+        self.laberinto.agregar_habitacion(hab2)
+        self.laberinto.agregar_habitacion(hab3)
+        self.laberinto.agregar_habitacion(hab4)
 
-        laberinto.agregar_habitacion(hab1)
-        laberinto.agregar_habitacion(hab2)
-        laberinto.agregar_habitacion(hab3)
-        laberinto.agregar_habitacion(hab4)
-        self.agregar_bicho(bicho1)
-        self.agregar_bicho(bicho2)
-        self.agregar_bicho(bicho3)
-        self.agregar_bicho(bicho4)
+        # Crear y agregar bichos
+        self.agregar_bicho(unFM.fabricarBichoAgresivo(hab1))
+        self.agregar_bicho(unFM.fabricarBichoAgresivo(hab2))
+        self.agregar_bicho(unFM.fabricarBichoPerezoso(hab3))
+        self.agregar_bicho(unFM.fabricarBichoPerezoso(hab4))
 
-        bicho1.posicion = hab1
-        bicho2.posicion = hab3
-        bicho3.posicion = hab2
-        bicho4.posicion = hab4
-        return laberinto
+        return self.laberinto
     
     def obtenerHabitacion(self, num):
         return self.laberinto.obtener_habitacion(num)
