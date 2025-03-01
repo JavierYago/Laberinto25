@@ -1,6 +1,6 @@
 import unittest
-from Laberinto.juego import *
-from Laberinto.creator import *
+from JuegoLaberinto.Laberinto.juego import *
+from JuegoLaberinto.FactoryMethod.creator import *
 
 class TestHabitaciones(unittest.TestCase):
 
@@ -11,32 +11,28 @@ class TestHabitaciones(unittest.TestCase):
         self.juego.crearLaberinto2HabitacionesFM(self.fm)
 
     def test_habitaciones(self):
-        hab1 = self.juego.obtenerHabitacion(1)
-        hab2 = self.juego.obtenerHabitacion(2)
-
-        self.assertIsInstance(hab1, Habitacion)
-        self.assertIsInstance(hab2, Habitacion)
-
-        # Asumiendo que los elementos "norte", "sur", "este", "oeste" son atributos de las habitaciones.
         norte = self.fm.fabricarNorte()
         sur = self.fm.fabricarSur()
         este = self.fm.fabricarEste()
         oeste = self.fm.fabricarOeste()
 
-        # Verificar paredes en hab1
-        self.assertTrue(hab1.obtenerElementoOr(norte).esPared())
-        self.assertTrue(hab1.obtenerElementoOr(este).esPared())
-        self.assertTrue(hab1.obtenerElementoOr(oeste).esPared())
+        hab1 = self.juego.laberinto.obtener_habitacion(1)
+        hab2 = self.juego.laberinto.obtener_habitacion(2)
 
-        # Verificar paredes en hab2
-        self.assertTrue(hab2.obtenerElementoOr(sur).esPared())
-        self.assertTrue(hab2.obtenerElementoOr(este).esPared())
-        self.assertTrue(hab2.obtenerElementoOr(oeste).esPared())
+        self.assertTrue(hab1.esHabitacion())
+        self.assertTrue(hab2.esHabitacion())
 
-        # Verificar puertas
-        pt12 = hab1.obtenerElementoOr(sur)
+        self.assertTrue(hab1.obtenerElementoOR(norte).esPared())
+        self.assertTrue(hab1.obtenerElementoOR(este).esPared())
+        self.assertTrue(hab1.obtenerElementoOR(oeste).esPared())
+
+        self.assertTrue(hab2.obtenerElementoOR(sur).esPared())
+        self.assertTrue(hab2.obtenerElementoOR(este).esPared())
+        self.assertTrue(hab2.obtenerElementoOR(oeste).esPared())
+
+        pt12 = hab1.obtenerElementoOR(sur)
         self.assertTrue(pt12.esPuerta())
-        self.assertTrue(hab2.obtenerElementoOr(norte).esPuerta())
+        self.assertTrue(hab2.obtenerElementoOR(norte).esPuerta())
         self.assertFalse(pt12.abierta)
 
 if __name__ == "__main__":

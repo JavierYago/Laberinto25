@@ -1,6 +1,6 @@
 import unittest
-from Laberinto.juego import *
-from Laberinto.creator import *
+from JuegoLaberinto.Laberinto.juego import *
+from JuegoLaberinto.FactoryMethod.creator import *
 
 class TestIniciales(unittest.TestCase):
 

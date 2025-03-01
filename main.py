@@ -1,5 +1,5 @@
-from creator import Creator, CreatorB
-from juego import Juego
+from JuegoLaberinto.FactoryMethod.creator import Creator, CreatorB
+from JuegoLaberinto.Laberinto.juego import Juego
 
 # Código de prueba
 #Laberinto con 2 habitaciones
