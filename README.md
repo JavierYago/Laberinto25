@@ -1,4 +1,4 @@
 # Laberinto25
-Juego del laberinto del curso Dsw 24-25 en python Javier Yago Giménez
-![image](https://github.com/user-attachments/assets/b1ce7567-d8c5-466e-8726-38e3c605d8a7)
+Proyecto diseñado en la asignatura Diseño Software 24-25 en python. Es un juego del laberinto realizado implementando los patrones del Design Patterns. Cuenta con los patrones Factory Method, Decorator, Strategy y Composite.
+![image](https://github.com/user-attachments/assets/ffe644ff-286e-417a-b7aa-a9635711fe06)
 
